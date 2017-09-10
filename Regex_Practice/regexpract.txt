@@ -1,2 +1,4 @@
 Jabberwocky $dollarsign #hashtag
 1987
+#morehash $dollardollar wordwordword
+900
