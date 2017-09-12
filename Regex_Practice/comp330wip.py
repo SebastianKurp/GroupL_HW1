@@ -38,3 +38,11 @@ for num in nums:
     numcount += 1
 
 print(str(numcount) + " instance(s) of number tags were found in the document.")
+
+num_unique_note_id = 0
+searchParamUnique = r"(!\w+)"
+uniqueNotes = re.findall(searchParamUnique, text)
+for note in uniqueNotes:
+    num_unique_note_id += 1
+
+print(str(num_unique_note_id) + " instance(s) of unique note identifiers were found in the document")
