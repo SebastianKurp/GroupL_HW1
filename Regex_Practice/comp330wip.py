@@ -47,12 +47,9 @@ for note in uniqueNotes:
 
 print(str(num_unique_note_id) + " instance(s) of unique note identifiers were found in the document")
 
-#path = os.path.join(os.path.expanduser('~'), 'workspace', 'group_l_hw', 'Regex_Practice', 'TryToOpen', 'openThis.txt')
 path = '/home/ubuntu/workspace/Regex_Practice/TryToOpen/openThis.txt'
 print(os.path.exists(path))
 print(path)
-#The above code works on my Ubuntu VM on my laptop, but not on C9
-#The below code works on my Windows machine, but also not on C9
 
 with open(path, 'r') as fileHand:
     newText = fileHand.read()
