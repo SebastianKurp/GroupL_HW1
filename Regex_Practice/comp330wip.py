@@ -20,9 +20,10 @@ searchParamHashtag = r"(\#\w+)" #escape out pound sign
 hashtag = re.findall(searchParamHashtag, text)
 for hashes in hashtag:
     hashcount += 1
-
+#Finds the amount of hashtags in the text
 print(str(hashcount) + " instance(s) of hashtags were found in the document.")
 
+#Finds the amount of dollar signs in the text
 dollarcount = 0
 searchParamDollars = r"(\$\w+)" #escape out dollar symbol
 dollars = re.findall(searchParamDollars, text)
