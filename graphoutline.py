@@ -1,27 +1,26 @@
 class Vertex:
-    def __init___(self, key):
+    def __init__(self, key):
         self.id = key
         #vertex ID
         self.edgeWith = {}
         #edge this vertex has with other vertices
         #stored in dict
     
-    def addNeighborVertex(self, neighbor, weight = 0):
-        self.edgeWith[neighbor] = weight
-        #add neighbor vertex as ID into dict with value
-        #being the weight
+    def addNeighborVertex(self, neighbor):
+        self.edgeWith[neighbor] = neighbor
+        #add neighbor vertex as ID
+        #in my notes weight = 0 was the last argument, but I don't think this needs to be a weighted graph
+        #but this will need a rewrite
         
     def getNeighbors(self):
-        return self.edgeWith.keys()
+        return list(self.edgeWith.values())
+        #python 3 weirdness, reworking
         
     def getID(self):
         return self.id
         
-    def getWeight(self,neighbor):
-        return self.edgeWith[neighbor]
-        
     def __str__(self):
-        return str(self.id) + " has an edge with " + str([x.id for x in self.edgeWith])
+        return str(self.id) + ' has an edge with ' + str([x.id for x in self.edgeWith])
         #ex: VertexB has an edge with VertexC
         #go through list of keys in self.edgeWith
 
@@ -48,13 +47,13 @@ class Graph:
         else:
             return None
             
-    def addEdge(self, fromVert, toVert, weight=0):
+    def addEdge(self, fromVert, toVert):
         if fromVert not in self.verticeDict:
             nv = self.addVertex(fromVert)
         if toVert not in self.verticeDict:
             self.addVertex(toVert)
         
-        self.verticeDict[fromVert].addNeighborVertex(self.verticeDict[toVert], weight)
+        self.verticeDict[fromVert].addNeighborVertex(self.verticeDict[toVert])
         #add the 'to vertex' as a neighbor of 'from vertex' by accessing it in the dictionary via
         #its key
         

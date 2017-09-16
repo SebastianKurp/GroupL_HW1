@@ -1,26 +1,28 @@
 import re
 import os
 
-filename = input("Enter file: ")
-filehandler = open(filename, 'r') #read the file
+
+filehandler = open('regexpract.txt', 'r') #read the file
 text = filehandler.read() #have file contents inside this var
+print(text)
 
 """ MatchObject = re.search(pattern, input_str, flags=0) """
 regwordcount = 0;
 searchParamRegWords = r"([A-Za-z]+)\s"
 regwords = re.findall(searchParamRegWords, text)
 for words in regwords:
+    print(words)
     regwordcount += 1
 
-print(str(regwordcount) + " instance(s) of unmarked words were found in the document.")
+print(str(regwordcount) + " instance(s) of all words were found in the document.")
 
-
+#Finds the amount of hashtags in the text
 hashcount = 0
 searchParamHashtag = r"(\#\w+)" #escape out pound sign
 hashtag = re.findall(searchParamHashtag, text)
 for hashes in hashtag:
     hashcount += 1
-#Finds the amount of hashtags in the text
+
 print(str(hashcount) + " instance(s) of hashtags were found in the document.")
 
 #Finds the amount of dollar signs in the text
@@ -32,6 +34,7 @@ for dollar in dollars:
 
 print(str(dollarcount) + " instance(s) of $ were found in the document.")
 
+#Finds and prints the number of numbers in the text
 numcount = 0
 searchParamNum = r"(\d+)"
 nums = re.findall(searchParamNum, text)
@@ -40,6 +43,7 @@ for num in nums:
 
 print(str(numcount) + " instance(s) of number tags were found in the document.")
 
+#Finds number of unique identifiers in the text 
 num_unique_note_id = 0
 searchParamUnique = r"(!\w+)"
 uniqueNotes = re.findall(searchParamUnique, text)
@@ -48,14 +52,21 @@ for note in uniqueNotes:
 
 print(str(num_unique_note_id) + " instance(s) of unique note identifiers were found in the document")
 
+#Finds number of mentions in the text
+num_mentions= 0
+searchParamMent = r"(^@\w+)"
+ment = re.findall(searchParamMent, text)
+for note in ment:
+    print (note)
+    num_mentions += 1
+
+print(str(num_mentions)+ " instance(s) of mentions were found in the document")
+
 path = '/home/ubuntu/workspace/Regex_Practice/TryToOpen/openThis.txt'
 print(os.path.exists(path))
 print(path)
 
 with open(path, 'r') as fileHand:
     newText = fileHand.read()
-    
-lookForSuccess = r"(\w+)"
-successNote = re.findall(lookForSuccess, newText)
-for note in successNote:
-    print(note)
+
+print(newText)
