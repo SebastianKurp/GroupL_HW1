@@ -13,7 +13,8 @@ class Vertex:
         #but this will need a rewrite
         
     def getNeighbors(self):
-        return list(self.edgeWith.values())
+        for key, value in self.edgeWith.items():
+            print(value)
         #python 3 weirdness, reworking
         
     def getID(self):
