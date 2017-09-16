@@ -4,73 +4,33 @@ import os
 
 filehandler = open('regexpract.txt', 'r') #read the file
 text = filehandler.read() #have file contents inside this var
-print(text)
 
-""" MatchObject = re.search(pattern, input_str, flags=0) """
-regwordcount = 0;
-searchParamRegWords = r"([A-Za-z]+)\s"
-regwords = re.findall(searchParamRegWords, text)
-for words in regwords:
-    print(words)
-    regwordcount += 1
+def run_report(searchParam, nameOfSeach, fileText):
+    count = 0
+    matches = re.findall(searchParam, fileText)
+    for match in matches:
+        count += 1
+    print(str(count) + " instance(s) of " + nameOfSeach +" were found in the document.")
 
-print(str(regwordcount) + " instance(s) of all words were found in the document.")
+#method to find desired mentions within text parsed from file
 
-#Finds the amount of hashtags in the text
-hashcount = 0
-searchParamHashtag = r"(\#\w+)" #escape out pound sign
-hashtag = re.findall(searchParamHashtag, text)
-for hashes in hashtag:
-    hashcount += 1
+runnableReports = {
+     "all words" : r"([A-Za-z]+)\s",
+     "hash tags" : r"(\#\w+)",
+     "dollar signs" : r"(\$\w+)",
+     "numbers" : r"(\d+)",
+     "unique identifiers" : r"(!\w+)",
+     "mentions" : r"(\@\w+)",
+     "URLS" : r"((http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?)"
+}
 
-print(str(hashcount) + " instance(s) of hashtags were found in the document.")
+#dictionary to hold the report choices (keys) and the parameters they search (values)
 
-#Finds the amount of dollar signs in the text
-dollarcount = 0
-searchParamDollars = r"c" #escape out dollar symbol
-dollars = re.findall(searchParamDollars, text)
-for dollar in dollars:
-    dollarcount += 1
+for key, value in runnableReports.items():
+    run_report(value,key,text)
 
-print(str(dollarcount) + " instance(s) of $ were found in the document.")
+#URL regex was found rather than created: @https://stackoverflow.com/questions/6038061/regular-expression-to-find-urls-within-a-string
 
-#Finds and prints the number of numbers in the text
-numcount = 0
-searchParamNum = r"(\d+)"
-nums = re.findall(searchParamNum, text)
-for num in nums:
-    numcount += 1
-
-print(str(numcount) + " instance(s) of number tags were found in the document.")
-
-#Finds number of unique identifiers in the text 
-num_unique_note_id = 0
-searchParamUnique = r"(!\w+)"
-uniqueNotes = re.findall(searchParamUnique, text)
-for note in uniqueNotes:
-    num_unique_note_id += 1
-
-print(str(num_unique_note_id) + " instance(s) of unique note identifiers were found in the document")
-
-#Finds number of mentions in the text
-num_mentions= 0
-searchParamMent = r"(\@\w+)"
-ment = re.findall(searchParamMent, text)
-for note in ment:
-    print (note)
-    num_mentions += 1
-
-print(str(num_mentions)+ " instance(s) of mentions were found in the document")
-
-#Finds number of urls in the text
-num_urls= 0
-searchParamurls = r"((http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?)" #found this regex @https://stackoverflow.com/questions/6038061/regular-expression-to-find-urls-within-a-string
-urls = re.findall(searchParamurls, text)
-for note in ment:
-    print (note)
-    num_urls += 1
-
-print(str(num_urls)+ " instance(s) of url were found in the document")
 
 path = '/home/ubuntu/workspace/Regex_Practice/TryToOpen/openThis.txt'
 print(os.path.exists(path))
