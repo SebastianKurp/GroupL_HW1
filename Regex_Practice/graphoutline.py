@@ -6,15 +6,14 @@ class Vertex:
         #edge this vertex has with other vertices
         #stored in dict
     
-    def addNeighborVertex(self, neighbor):
-        self.edgeWith[neighbor] = neighbor
-        #add neighbor vertex as ID
+    def addNeighborVertex(self, neighbor, weight):
+        self.edgeWith[neighbor] = weight
         #in my notes weight = 0 was the last argument, but I don't think this needs to be a weighted graph
         #but this will need a rewrite
         
     def getNeighbors(self):
         for key, value in self.edgeWith.items():
-            print(value)
+            print(self)
         #python 3 weirdness, reworking
         
     def getID(self):
@@ -48,13 +47,13 @@ class Graph:
         else:
             return None
             
-    def addEdge(self, fromVert, toVert):
+    def addEdge(self, fromVert, toVert, weight):
         if fromVert not in self.verticeDict:
             nv = self.addVertex(fromVert)
         if toVert not in self.verticeDict:
             self.addVertex(toVert)
         
-        self.verticeDict[fromVert].addNeighborVertex(self.verticeDict[toVert])
+        self.verticeDict[fromVert].addNeighborVertex(self.verticeDict[toVert], weight)
         #add the 'to vertex' as a neighbor of 'from vertex' by accessing it in the dictionary via
         #its key
         
