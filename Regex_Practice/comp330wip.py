@@ -1,6 +1,10 @@
 import re
 import os
+import locale
 
+locale.getpreferredencoding()
+#get default encoding from local machine
+#working on making this run on multiple machines, not just C9
 
 filehandler = open('regexpract.txt', 'r') #read the file
 text = filehandler.read() #have file contents inside this var
@@ -31,19 +35,23 @@ for key, value in runnableReports.items():
 
 #URL regex was found rather than created: @https://stackoverflow.com/questions/6038061/regular-expression-to-find-urls-within-a-string
 
-directoryPath = '/home/ubuntu/workspace/Regex_Practice/TryToOpen/'
-#path to TryToOpen
+directoryPath = os.path.dirname(os.path.realpath(__file__))
+#returns path to directory this .py file is contained in
+theOtherDirectory = directoryPath + '/TryToOpen'
+#give directory you want to open
 
 #below code allows to open 'TryToOpen' folder and opens all files ending with .txt
-for file in os.listdir(directoryPath):
+for file in os.listdir(theOtherDirectory):
     filename = os.fsdecode(file)
     if filename.endswith('.txt'):
         print("Opening and reading: " + filename)
-        filePath = os.path.join(directoryPath, filename)
+        filePath = os.path.join(theOtherDirectory, filename)
         with open(filePath, 'r') as fileHand:
             docText = fileHand.read()
             for key, value in runnableReports.items():
                 run_report(value, key, docText)
+            fileHand.close()
+            #close the file when done with it, save resources, etc etc
         continue
     else:
         continue
