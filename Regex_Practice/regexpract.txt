@@ -2,5 +2,8 @@ Jabberwocky $dollarsign #hashtag
 1987 !unique
 #morehash $dollardollar wordwordword
 900
+@memes
+https:\\www.testurl.io\with url
 !uniqueIdent
 @something
+http:\\www.testurl.io
