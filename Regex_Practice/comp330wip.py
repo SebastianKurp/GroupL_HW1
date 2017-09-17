@@ -10,8 +10,26 @@ locale.getpreferredencoding()
 agg_counts = {}
 #put aggregate counts into dict
 
-filehandler = open('regexpract.txt', 'r') #read the file
-text = filehandler.read() #have file contents inside this var
+runnableReports = {
+     "all words" : r"([A-Za-z]+)",
+     "hash tags" : r"(\#\w+)",
+     "dollar signs" : r"(\$\w+)",
+     "numbers" : r"(\d+)",
+     "unique identifiers" : r"(!\w+)",
+     "mentions" : r"(\@\w+)",
+     "URLS" : r"((http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?)"
+}
+
+reportChoices = ["all words", "hash tags", "dollar signs", "numbers", "unique identifiers", "mentions", "URLS", "all reports"]
+
+#dictionary to hold the report choices (keys) and the parameters they search (values)
+#URL regex was found rather than created: @https://stackoverflow.com/questions/6038061/regular-expression-to-find-urls-within-a-string
+
+def run_keyword_type(nameOfSearch, fileText):
+    search = nameOfSearch
+    text = fileText
+    #had to set variables otherwise considered undefined when fed as arugment
+    run_report(runnableReports.get(search), search, text)
 
 #method to find desired mentions within text parsed from file
 def run_report(searchParam, nameOfSeach, fileText):
@@ -24,24 +42,6 @@ def run_report(searchParam, nameOfSeach, fileText):
     print(str(len(agg_counts[nameOfSeach])) + " instance(s) of " + nameOfSeach +" were found in the document.")
     #the length of the array indicates how many of each type of keyword were found
 
-
-runnableReports = {
-     "all words" : r"([A-Za-z]+)",
-     "hash tags" : r"(\#\w+)",
-     "dollar signs" : r"(\$\w+)",
-     "numbers" : r"(\d+)",
-     "unique identifiers" : r"(!\w+)",
-     "mentions" : r"(\@\w+)",
-     "URLS" : r"((http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?)"
-}
-
-#dictionary to hold the report choices (keys) and the parameters they search (values)
-
-for key, value in runnableReports.items():
-    run_report(value,key,text)
-
-#URL regex was found rather than created: @https://stackoverflow.com/questions/6038061/regular-expression-to-find-urls-within-a-string
-
 directoryPath = os.path.dirname(os.path.realpath(__file__))
 #returns path to directory this .py file is contained in
 theOtherDirectory = directoryPath + '/TryToOpen'
@@ -52,22 +52,37 @@ noteGraph = Graph()
 #create a graph for the notes
 
 #below code allows to open 'TryToOpen' folder and opens all files ending with .txt
-for file in os.listdir(theOtherDirectory):
-    filename = os.fsdecode(file)
-    if filename.endswith('.txt'):
-        #noteGraph.addVertex(filename)
-        print("Opening and reading: " + filename)
-        filePath = os.path.join(theOtherDirectory, filename)
-        with open(filePath, 'r') as fileHand:
-            docText = fileHand.read()
-            for key, value in runnableReports.items():
-                run_report(value, key, docText)
-            fileHand.close()
-            #close the file when done with it, save resources, etc etc
-        continue
-    else:
-        continue
+def OpenDir(nameOfSeach):
+    for file in os.listdir(theOtherDirectory):
+        filename = os.fsdecode(file)
+        if filename.endswith('.txt'):
+            print("Opening and reading: " + filename)
+            filePath = os.path.join(theOtherDirectory, filename)
+            with open(filePath, 'r') as fileHand:
+                docText = fileHand.read()
+            if(nameOfSeach == "all reports"):    
+                for key, value in runnableReports.items():
+                    run_report(value, key, docText)
+                    fileHand.close()
+                    #don't hog resouces
+                    continue
+            else:
+                run_keyword_type(nameOfSeach, docText)
+        else:
+            continue
+       
 
+def report_options():
+    for i in range(8):
+        print("[" + str(i) + "] " + str(reportChoices[i]))
+    report_choice = input("What report would you like to run? ")
+    return int(report_choice)
+
+
+
+user_choice = reportChoices[report_options()]    
+OpenDir(user_choice)
+    
     
     
 """
