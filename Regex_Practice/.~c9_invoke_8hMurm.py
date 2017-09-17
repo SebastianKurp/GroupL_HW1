@@ -17,11 +17,9 @@ runnableReports = {
      "numbers" : r"(\d+)",
      "unique identifiers" : r"(!\w+)",
      "mentions" : r"(\@\w+)",
-     "URLS" : r"([http:\/\/|https:\/\/|ftp:\/\/|w{3}].+\.\w{1,4}[\/\w]{0,300})"
+     "URLS" : r"(^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$)"
 }
-#([http:\/\/|https:\/\/|ftp:\/\/|w{3}].+\.\w{1,4})
-#([http:\/\/|https:\/\/|ftp:\/\/|w{3}].+\.\w{1,4}[\/\w]{0,300})
-#((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$)
+
 reportChoices = ["all words", "hash tags", "dollar signs", "numbers", "unique identifiers", "mentions", "URLS", "all reports", "done running reports"]
 
 #dictionary to hold the report choices (keys) and the parameters they search (values)
@@ -83,17 +81,13 @@ def report_options():
 #prints list of options and returns as int the index to the array which holds the key values which
 #can be fed to a search
 
-while True:
-    selection = report_options()
-    if selection != 8:
-        user_choice = reportChoices[selection]
-        #feed the int returned from report_options into array reportChoices as the index. This will give back to
-        #user_choice the string value from the array which matches the key in the dict runnableReports
-        OpenDir(user_choice)
-        #opens the directory and does regex search as key is tied to regex parameter as its value
-    else:
-        print("Exiting report menu. ")
-        break
+user_choice = reportChoices[report_options()]
+if
+#feed the int returned from report_options into array reportChoices as the index. This will give back to
+#user_choice the string value from the array which matches the key in the dict runnableReports
+OpenDir(user_choice)
+#opens the directory and does regex search as key is tied to regex parameter as its value
+    
     
     
 """
