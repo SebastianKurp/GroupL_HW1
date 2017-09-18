@@ -39,11 +39,17 @@ def run_report(searchParam, nameOfSeach, fileText):
     #the individual keywords go into an array
     matches = re.findall(searchParam, fileText)
     for match in matches:
-        print(match)
         agg_counts[nameOfSeach].append(match)
     
     print(str(len(agg_counts[nameOfSeach])) + " instance(s) of " + nameOfSeach +" were found in the document.")
     #the length of the array indicates how many of each type of keyword were found
+    if len(agg_counts[nameOfSeach]) > 0:
+        word_array = agg_counts.get(nameOfSeach)
+        for i in range(len(word_array)):
+            print(word_array[i])
+    #given that there are >0 matches it will print those matches for you as they stored in the array that is the value
+    #connected to the key (nameOfSearch)
+
 
 directoryPath = os.path.dirname(os.path.realpath(__file__))
 #returns path to directory this .py file is contained in
@@ -97,16 +103,16 @@ while True:
     
     
 """
-Be able to report of all notes containing one or more keywords
+1. Be able to report of all notes containing one or more keywords
 -- bool: contains_keywords
-Be able to generate a report of all notes, organized by mention
+2.  able to generate a report of all notes, organized by mention
 -- Aggregate count of all keyword types (@, #, !, etc) from all notes
-Be able to generate a report of all keywords
+3. Be able to generate a report of all keywords
 -- Report count of all individual keywords
-Be able to generate a report of all notes, organized by keyword
+4. Be able to generate a report of all notes, organized by keyword
 -- Report all notes, organized by agg. counts of keywords
-Be able to report notes by mention/keywords selectively
+5. Be able to report notes by mention/keywords selectively
 -- As above, but with individually chosen keywords
-Report of all notes in topological order
+6. Report of all notes in topological order
 -- Still unclear what defines order here. First chosen file?
 """
