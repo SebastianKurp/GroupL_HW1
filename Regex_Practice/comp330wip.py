@@ -2,6 +2,8 @@ import re
 import os
 import locale
 import collections
+import itertools
+from collections import OrderedDict
 from graphoutline import *
 
 locale.getpreferredencoding()
@@ -9,7 +11,25 @@ locale.getpreferredencoding()
 #working on making this run on multiple machines, not just C9
 
 agg_counts = {}
-#put aggregate counts into dict
+#put aggregate counts into dict -- this holds the counts for #, !, ^, @, $, and URLs
+
+#! is a unique identifier. Functionally the title of the note. The method is written on the assumption each note can have at most 1
+note_identifiers = {}
+
+connections = {}
+#^ are references to other notes which have the unique identifier !
+
+directoryPath = os.path.dirname(os.path.realpath(__file__))
+#returns path to directory this .py file is contained in
+
+theOtherDirectory = directoryPath + '/TryToOpen'
+#assuming you cloned this, your notes should be in the TryToOpen directory
+
+notes_dictionary = collections.OrderedDict()
+#keep notes in sequential order
+
+frequent_words = {}
+#this keeps a running tally of each unique word (any old word, not just !words)
 
 runnableReports = {
      "hash tags" : r"(\#\w+)",
@@ -17,10 +37,21 @@ runnableReports = {
      "unique identifiers" : r"(!\w+)",
      "mentions" : r"(\@\w+)",
      "URLS" : r"([http:\/\/|https:\/\/|ftp:\/\/|w{3}].+\.\w{1,4}[\/\w]{0,300})",
-     "carots" : r"(\^\w+)"
+     "carots" : r"(\^\w+)",
+     "most frequently used words" : r"(\w+)"
 }
 
-reportChoices = ["hash tags", "dollar signs", "unique identifiers", "mentions", "URLS", "carots", "which notes reference other notes", "done running reports"]
+#This dictionary has the names of the searches which the user sees in the menu as well as the regex search parameters that the methods use
+
+reportChoices = ["hash tags",
+"dollar signs",
+"unique identifiers",
+"mentions",
+"URLS",
+"carots",
+"which notes reference other notes",
+"most frequently used words",
+"done running reports"]
 
 #dictionary to hold the report choices (keys) and the parameters they search (values)
 
@@ -47,14 +78,6 @@ def run_report(searchParam, nameOfSeach, fileText):
     #given that there are >0 matches it will print those matches for you as they stored in the array that is the value
     #connected to the key (nameOfSearch)
 
-
-directoryPath = os.path.dirname(os.path.realpath(__file__))
-#returns path to directory this .py file is contained in
-theOtherDirectory = directoryPath + '/TryToOpen'
-#give directory you want to open
-notes_dictionary = collections.OrderedDict()
-#keep notes in sequential order
-
 def get_notes():
     for file in os.listdir(theOtherDirectory):
         filename = os.fsdecode(file)
@@ -65,12 +88,7 @@ def get_notes():
                 docText = fileHand.read()
                 notes_dictionary[filename] = docText
                 #key is name of note, value is the text of the document
-
-
-
-#"unique identifiers" : r"(!\w+)",
-#! is a unique identifier. Functionally the title of the note. This is written on the assumption each note can have at most 1
-note_identifiers = {}
+#allows to open 'TryToOpen' folder and opens all files ending with .txt
 
 def parse_notes_for_identifiers():
     for key, val in notes_dictionary.items():
@@ -82,8 +100,6 @@ def parse_notes_for_identifiers():
             note_identifiers[key] = match
             #name of note is key, !title is the value
 
-connections = {}
-#^ are references to other notes which have the unique identifier !
 def parse_notes_for_carots():
     for key, val in notes_dictionary.items():
         connections[key] = []
@@ -98,10 +114,25 @@ def compare_carot_to_bang():
         for uniquefilename, title in note_identifiers.items():
             if hashtag.count(title) != 0:
                 print(hashtagfilename + " contains a reference to " + uniquefilename + " with the title !" + title)
+#this method looks at the results of parse_notes_for_identifiers and parse_notes_for_carots and prints the links between them
 
-#below code allows to open 'TryToOpen' folder and opens all files ending with .txt
-
-
+def most_frequent_words():
+    for filename, text in notes_dictionary.items():
+        matches = re.findall(r"(\w+)", text)
+        for match in matches:
+            if match in frequent_words:
+                frequent_words[match] += 1
+            else:
+                frequent_words[match] = 1
+    #sort the dictionary
+    sortedByNumHits = OrderedDict(sorted(frequent_words.items(), key=lambda t: t[1], reverse=True))
+    topTenKeywords = itertools.islice(sortedByNumHits.items(), 0, 10)
+    print("The top most commonly used words in all the notes are: ")
+    count = 1
+    for word, numHits in topTenKeywords:
+        print(str(count) + ". '" + str(word) + "'" + " with " + str(numHits) + " uses")
+        count += 1
+#this method gets ALL words and reverse sorts the OrderedDict based on number of times the word (key) was seen. It then prints the top 10.
 
 def OpenDir(nameOfSeach):
     for file in os.listdir(theOtherDirectory):
@@ -117,15 +148,16 @@ def OpenDir(nameOfSeach):
                     fileHand.close()
                     #don't hog resouces
                     continue
-            if(nameOfSeach == "which notes reference other notes"):
+            elif(nameOfSeach == "which notes reference other notes"):
                 get_notes()
                 parse_notes_for_identifiers()
                 parse_notes_for_carots()
                 compare_carot_to_bang()
+            elif(nameOfSeach == "most frequently used words"):
+                get_notes()
+                most_frequent_words()
             else:
                 run_keyword_type(nameOfSeach, docText)
-        else:
-            continue
 """
 def main_searches(nameOfSeach):
     for filename, text in notes_dictionary.items():
@@ -143,10 +175,11 @@ def main_searches(nameOfSeach):
         else:
             run_keyword_type(nameOfSeach, text)
 """
-#the block above is quite broken, but Im working on it
+#the block above is quite broken, but Im working on it. Right now OpenDir and get_notes repeat eachother but I have 
+#not been sucessful in linking them
 
 def report_options():
-    for i in range(8):
+    for i in range(9):
         print("[" + str(i) + "] " + str(reportChoices[i]))
     report_choice = input("What report would you like to run? ")
     try:
@@ -160,7 +193,7 @@ def report_options():
 
 while True:
     selection = report_options()
-    if selection != 7:
+    if selection != 8:
         user_choice = reportChoices[selection]
         #feed the int returned from report_options into array reportChoices as the index. This will give back to
         #user_choice the string value from the array which matches the key in the dict runnableReports
@@ -169,14 +202,9 @@ while True:
     else:
         print("Exiting report menu. ")
         break
-"""
- 
-get_notes()
-parse_notes_for_identifiers()
-parse_notes_for_carots()
-compare_carot_to_bang()
-    
 
+
+"""
 1. Be able to report of all notes containing one or more keywords
 -- bool: contains_keywords
 2.  able to generate a report of all notes, organized by mention
