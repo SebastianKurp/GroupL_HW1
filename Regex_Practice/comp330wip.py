@@ -51,6 +51,7 @@ reportChoices = ["hash tags",
 "carots",
 "which notes reference other notes",
 "most frequently used words",
+"search a specific mention, keyword, or general word",
 "done running reports"]
 
 #dictionary to hold the report choices (keys) and the parameters they search (values)
@@ -130,64 +131,66 @@ def most_frequent_words():
     #sort the dictionary
     print("The top most commonly used words in all the notes are: ")
     sortedByNumHits = OrderedDict(sorted(frequent_words.items(), key=lambda t: t[1], reverse=True))
-    #topTenKeywords = itertools.islice(sortedByNumHits.items(), 0, 10) seems broken
-    #topTenKeywords = dict(list(sortedByNumHits.items())[:10])
-    cutDown = collections.Counter(frequent_words).most_common(10)
-    #same issue, loops too much
-    
+    topTenKeywords = itertools.islice(sortedByNumHits.items(), 0, 10)
     count = 1
-    for i in range(len(cutDown)):
-        print(cutDown[i])
-  #  for word, numHits in cutDown.items():
-   #     print(str(count) + ". '" + str(word) + "'" + " with " + str(numHits) + " uses")
-    #    count += 1
+    for word, numHits in topTenKeywords:
+        print(str(count) + ". '" + str(word) + "'" + " with " + str(numHits) + " uses")
+        count += 1
 #this method gets ALL words and reverse sorts the OrderedDict based on number of times the word (key) was seen. It then prints the top 10.
 
-"""
-def OpenDir(nameOfSeach):
-    for file in os.listdir(theOtherDirectory):
-        filename = os.fsdecode(file)
-        if filename.endswith('.txt'):
-            print("Opening and reading: " + filename)
-            filePath = os.path.join(theOtherDirectory, filename)
-            with open(filePath, 'r') as fileHand:
-                docText = fileHand.read()
-            if(nameOfSeach == "all reports"):    
-                for key, value in runnableReports.items():
-                    run_report(value, key, docText)
-                    fileHand.close()
-                    #don't hog resouces
-                    continue
-            elif(nameOfSeach == "which notes reference other notes"):
-                get_notes()
-                parse_notes_for_identifiers()
-                parse_notes_for_carots()
-                compare_carot_to_bang()
-            elif(nameOfSeach == "most frequently used words"):
-                get_notes()
-                most_frequent_words()
-            else:
-                run_keyword_type(nameOfSeach, docText)
-"""
-def main_searches(nameOfSeach):
+def find_specific_word():
+    basic_regex_end = ")"
+
+    choice = input("Were you looking for a [1] mention, [2] keyword, or [3] any word? ")
+    print(choice)
+    if choice == "1":
+        mention_regex_start = "(\@"
+        mention = input("Please input the mention you are looking for (do not include the @): ")
+        search_param = mention_regex_start + str(mention) + basic_regex_end
+        print(search_param)
+    elif choice == "2":
+        hash_regex_start = "(\#"
+        keyword = input("Please input the keyword you are looking for (do not include the #): ")
+        search_param = hash_regex_start + str(keyword) + basic_regex_end
+    elif choice == "3":
+        word_start = "("
+        #this is wrong, but something isn't working with re.findall when the parameter is given as a string
+        word = input("Please input the word you are looking for: ")
+        search_param = word_start + word + basic_regex_end
+        #run_report(searchParam, nameOfSeach, fileText, documentName):
+    else:
+        print("Invalid choice")
+        find_specific_word()
     for filename, text in notes_dictionary.items():
-        #val is text
-        if(nameOfSeach == "all reports"):
-            for typeOfSearch, searchParam in runnableReports.items():
-                run_report(searchParam, typeOfSearch, text, filename)
-                continue
-        elif(nameOfSeach != "which notes reference other notes" and nameOfSeach != "most frequently used words"):
-            run_keyword_type(nameOfSeach, text, filename)
+        re.compile(search_param)
+        #make it readable for re
+        matches = re.findall(search_param, text)
+        for match in matches:
+           print(str(match) + " was found in " + str(filename))
+
+def main_searches(nameOfSeach):
     if(nameOfSeach == "which notes reference other notes"):
             parse_notes_for_identifiers()
             parse_notes_for_carots()
             compare_carot_to_bang()
     elif(nameOfSeach == "most frequently used words"):
             most_frequent_words()
+    elif(nameOfSeach == "search a specific mention, keyword, or general word"):
+        find_specific_word()
+    else:
+        for filename, text in notes_dictionary.items():
+            #val is text
+            if(nameOfSeach == "all reports"):
+                for typeOfSearch, searchParam in runnableReports.items():
+                    run_report(searchParam, typeOfSearch, text, filename)
+                    continue
+            else:
+                run_keyword_type(nameOfSeach, text, filename)
+    
 
 
 def report_options():
-    for i in range(9):
+    for i in range(10):
         print("[" + str(i) + "] " + str(reportChoices[i]))
     report_choice = input("What report would you like to run? ")
     try:
@@ -199,9 +202,10 @@ def report_options():
 #can be fed to a search
 
 get_notes()
+
 while True:
     selection = report_options()
-    if selection != 8:
+    if selection != 9:
         user_choice = reportChoices[selection]
         #feed the int returned from report_options into array reportChoices as the index. This will give back to
         #user_choice the string value from the array which matches the key in the dict runnableReports
