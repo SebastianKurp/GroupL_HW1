@@ -55,21 +55,22 @@ reportChoices = ["hash tags",
 
 #dictionary to hold the report choices (keys) and the parameters they search (values)
 
-def run_keyword_type(nameOfSearch, fileText):
+def run_keyword_type(nameOfSearch, fileText, documentName):
     search = nameOfSearch
     text = fileText
+    docName = documentName
     #had to set variables otherwise considered undefined when fed as arugment
-    run_report(runnableReports.get(search), search, text)
+    run_report(runnableReports.get(search), search, text, docName)
 
 #method to find desired mentions within text parsed from file
-def run_report(searchParam, nameOfSeach, fileText):
+def run_report(searchParam, nameOfSeach, fileText, documentName):
     agg_counts[nameOfSeach] = []
     #the individual keywords go into an array
     matches = re.findall(searchParam, fileText)
     for match in matches:
         agg_counts[nameOfSeach].append(match)
     
-    print(str(len(agg_counts[nameOfSeach])) + " instance(s) of " + nameOfSeach +" were found in the document.")
+    print(str(len(agg_counts[nameOfSeach])) + " instance(s) of " + nameOfSeach +" were found in " + str(documentName) + ".")
     #the length of the array indicates how many of each type of keyword were found
     if len(agg_counts[nameOfSeach]) > 0:
         word_array = agg_counts.get(nameOfSeach)
@@ -82,7 +83,8 @@ def get_notes():
     for file in os.listdir(theOtherDirectory):
         filename = os.fsdecode(file)
         if filename.endswith('.txt'):
-            print("Opening and reading: " + filename)
+            #print("Opening and reading: " + filename)
+            #removed because looks cluttered
             filePath = os.path.join(theOtherDirectory, filename)
             with open(filePath, 'r') as fileHand:
                 docText = fileHand.read()
@@ -110,8 +112,9 @@ def parse_notes_for_carots():
 
 #bang = !
 def compare_carot_to_bang():
-    for hashtagfilename, hashtag in connections.items():
-        for uniquefilename, title in note_identifiers.items():
+    for uniquefilename, title in note_identifiers.items():
+        #for each title check to see if it exists in the list of hashtags
+        for hashtagfilename, hashtag in connections.items():
             if hashtag.count(title) != 0:
                 print(hashtagfilename + " contains a reference to " + uniquefilename + " with the title !" + title)
 #this method looks at the results of parse_notes_for_identifiers and parse_notes_for_carots and prints the links between them
@@ -125,15 +128,22 @@ def most_frequent_words():
             else:
                 frequent_words[match] = 1
     #sort the dictionary
-    sortedByNumHits = OrderedDict(sorted(frequent_words.items(), key=lambda t: t[1], reverse=True))
-    topTenKeywords = itertools.islice(sortedByNumHits.items(), 0, 10)
     print("The top most commonly used words in all the notes are: ")
+    sortedByNumHits = OrderedDict(sorted(frequent_words.items(), key=lambda t: t[1], reverse=True))
+    #topTenKeywords = itertools.islice(sortedByNumHits.items(), 0, 10) seems broken
+    #topTenKeywords = dict(list(sortedByNumHits.items())[:10])
+    cutDown = collections.Counter(frequent_words).most_common(10)
+    #same issue, loops too much
+    
     count = 1
-    for word, numHits in topTenKeywords:
-        print(str(count) + ". '" + str(word) + "'" + " with " + str(numHits) + " uses")
-        count += 1
+    for i in range(len(cutDown)):
+        print(cutDown[i])
+  #  for word, numHits in cutDown.items():
+   #     print(str(count) + ". '" + str(word) + "'" + " with " + str(numHits) + " uses")
+    #    count += 1
 #this method gets ALL words and reverse sorts the OrderedDict based on number of times the word (key) was seen. It then prints the top 10.
 
+"""
 def OpenDir(nameOfSeach):
     for file in os.listdir(theOtherDirectory):
         filename = os.fsdecode(file)
@@ -164,19 +174,17 @@ def main_searches(nameOfSeach):
         #val is text
         if(nameOfSeach == "all reports"):
             for typeOfSearch, searchParam in runnableReports.items():
-                run_report(searchParam, typeOfSearch, text)
-                fileHand.close()
-                #don't hog resouces
+                run_report(searchParam, typeOfSearch, text, filename)
                 continue
-        if(nameOfSeach == "which notes reference other notes"):
+        elif(nameOfSeach != "which notes reference other notes" and nameOfSeach != "most frequently used words"):
+            run_keyword_type(nameOfSeach, text, filename)
+    if(nameOfSeach == "which notes reference other notes"):
             parse_notes_for_identifiers()
             parse_notes_for_carots()
             compare_carot_to_bang()
-        else:
-            run_keyword_type(nameOfSeach, text)
-"""
-#the block above is quite broken, but Im working on it. Right now OpenDir and get_notes repeat eachother but I have 
-#not been sucessful in linking them
+    elif(nameOfSeach == "most frequently used words"):
+            most_frequent_words()
+
 
 def report_options():
     for i in range(9):
@@ -190,19 +198,18 @@ def report_options():
 #prints list of options and returns as int the index to the array which holds the key values which
 #can be fed to a search
 
-
+get_notes()
 while True:
     selection = report_options()
     if selection != 8:
         user_choice = reportChoices[selection]
         #feed the int returned from report_options into array reportChoices as the index. This will give back to
         #user_choice the string value from the array which matches the key in the dict runnableReports
-        OpenDir(user_choice)
+        main_searches(user_choice)
         #opens the directory and does regex search as key is tied to regex parameter as its value
     else:
         print("Exiting report menu. ")
         break
-
 
 """
 1. Be able to report of all notes containing one or more keywords
