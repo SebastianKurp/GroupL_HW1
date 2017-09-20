@@ -36,11 +36,11 @@ runnableReports = {
      "dollar signs" : r"(\$\w+)",
      "unique identifiers" : r"(!\w+)",
      "mentions" : r"(\@\w+)",
-     "URLS" : r"([http:\/\/|https:\/\/|ftp:\/\/|w{3}].+\.\w{1,4}[\/\w]{0,300})",
+     "URLS" : r"((http|https|ftp|www).+\.\w{1,4}[\/\w]{0,300})",
      "carots" : r"(\^\w+)",
      "most frequently used words" : r"(\w+)"
 }
-
+#((http|https|ftp|www).+\.\w{1,4}[\/\w]{0,300}) is partially working, just need to write method to merge the subgroups I thinkpython3
 #This dictionary has the names of the searches which the user sees in the menu as well as the regex search parameters that the methods use
 
 reportChoices = ["hash tags",
