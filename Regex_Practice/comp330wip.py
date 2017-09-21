@@ -37,8 +37,7 @@ runnableReports = {
      "unique identifiers" : r"(!\w+)",
      "mentions" : r"(\@\w+)",
      "URLS" : r"((http|https|ftp|www).+\.\w{1,4}[\/\w]{0,300})",
-     "carots" : r"(\^\w+)",
-     "most frequently used words" : r"(\w+)"
+     "carots" : r"(\^\w+)"
 }
 #((http|https|ftp|www).+\.\w{1,4}[\/\w]{0,300}) is partially working, just need to write method to merge the subgroups I thinkpython3
 #This dictionary has the names of the searches which the user sees in the menu as well as the regex search parameters that the methods use
@@ -52,6 +51,7 @@ reportChoices = ["hash tags",
 "which notes reference other notes",
 "most frequently used words",
 "search a specific mention, keyword, or general word",
+"report all keyword types",
 "done running reports"]
 
 #dictionary to hold the report choices (keys) and the parameters they search (values)
@@ -140,23 +140,22 @@ def most_frequent_words():
 
 def find_specific_word():
     basic_regex_end = ")"
-
+    #all the regex expressions have the same ending
+    found_words = {}
+    #this is local so it resets after the function call ends
     choice = input("Were you looking for a [1] mention, [2] keyword, or [3] any word? ")
-    print(choice)
     if choice == "1":
         mention_regex_start = "(\@"
-        mention = input("Please input the mention you are looking for (do not include the @): ")
-        search_param = mention_regex_start + str(mention) + basic_regex_end
-        print(search_param)
+        word = input("Please input the mention you are looking for (do not include the @): ")
+        search_param = mention_regex_start + str(word) + basic_regex_end
     elif choice == "2":
         hash_regex_start = "(\#"
-        keyword = input("Please input the keyword you are looking for (do not include the #): ")
-        search_param = hash_regex_start + str(keyword) + basic_regex_end
+        word = input("Please input the keyword you are looking for (do not include the #): ")
+        search_param = hash_regex_start + str(word) + basic_regex_end
     elif choice == "3":
         word_start = "("
-        #this is wrong, but something isn't working with re.findall when the parameter is given as a string
         word = input("Please input the word you are looking for: ")
-        search_param = word_start + word + basic_regex_end
+        search_param = word_start + str(word) + basic_regex_end
         #run_report(searchParam, nameOfSeach, fileText, documentName):
     else:
         print("Invalid choice")
@@ -165,8 +164,11 @@ def find_specific_word():
         re.compile(search_param)
         #make it readable for re
         matches = re.findall(search_param, text)
+        found_words[filename] = 0
+        #initialize to zero so does not return None and so can be incremented on line below
         for match in matches:
-           print(str(match) + " was found in " + str(filename))
+                found_words[filename] += 1
+        print(str(word) + " was found in " + str(filename) + " " + str(found_words.get(filename)) + " time(s)")
 
 def main_searches(nameOfSeach):
     if(nameOfSeach == "which notes reference other notes"):
@@ -180,17 +182,15 @@ def main_searches(nameOfSeach):
     else:
         for filename, text in notes_dictionary.items():
             #val is text
-            if(nameOfSeach == "all reports"):
+            if(nameOfSeach == "report all keyword types"):
                 for typeOfSearch, searchParam in runnableReports.items():
                     run_report(searchParam, typeOfSearch, text, filename)
                     continue
             else:
                 run_keyword_type(nameOfSeach, text, filename)
-    
-
 
 def report_options():
-    for i in range(10):
+    for i in range(11):
         print("[" + str(i) + "] " + str(reportChoices[i]))
     report_choice = input("What report would you like to run? ")
     try:
@@ -205,7 +205,7 @@ get_notes()
 
 while True:
     selection = report_options()
-    if selection != 9:
+    if selection != 10:
         user_choice = reportChoices[selection]
         #feed the int returned from report_options into array reportChoices as the index. This will give back to
         #user_choice the string value from the array which matches the key in the dict runnableReports
