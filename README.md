@@ -7,4 +7,9 @@ The value of the key is a regex search expression. This search expression is giv
 choose to run all reports it will simply run each key/value pair in the dictionary.
 
 The main folder also includes some prelimary work with graphs which are undergoing revision as they are based off
-notes from learning data structures in Python 2.7. 
+notes from learning data structures in Python 2.7.
+
+#To Run
+1.Run the comp 330wip.py file in regex_practice
+
+2.Select an option
