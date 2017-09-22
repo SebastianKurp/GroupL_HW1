@@ -4,3 +4,4 @@ buy scredrivers (flat head and philips)
 look at the screw, and match the indents in the screw to the
 tip of your scredriver.
 Put the screwdriver into the screw and turn until tight!
+#scredriver ^tools

@@ -72,7 +72,7 @@ Generates patch files or statistics of differences between paths or files in you
 gitk
 Graphical Tcl/Tk based interface to a local Git repository. Example: gitk
 
-
+^Ahab
 git instaweb
 Runs a web server with an interface into your local repository and automatically directs a web browser to it. Example: git instaweb --httpd=webrick git instaweb --stop
 

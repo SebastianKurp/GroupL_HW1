@@ -190,7 +190,8 @@ def report_options():
         return int(report_choice)
     except:
         print("Invalid choice.")
-        report_options()
+        return report_options()
+        #if you don't return here it returns None. 
 #prints list of options and returns as int the index to the array which holds the key values which
 #can be fed to a search
 

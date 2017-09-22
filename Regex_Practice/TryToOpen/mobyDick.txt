@@ -23,6 +23,7 @@ hammock on the deck, whose gathered sides some
 noiseless sailors were busy in sewing together. 
 Moby Dick
 983 of 1047
+$whaleoil
 ‘Not forged!’ and snatching Perth’s levelled iron from
 the crotch, Ahab held it out, exclaiming—‘Look ye,
 Nantucketer; here in this hand I hold his death! Tempered
@@ -40,6 +41,7 @@ towards the hammock with uplifted hands—‘may the
 resurrection and the life—‘
 ‘Brace forward! Up helm!’ cried Ahab like lightning to
 his men.
+@Moby
 But the suddenly started Pequod was not quick enough
 to escape the sound of the splash that the corpse soon
 made as it struck the sea; not so quick, indeed, but that
@@ -47,6 +49,7 @@ some of the flying bubbles might have sprinkled her hull
 with their ghostly baptism. 
 Moby Dick
 984 of 1047
+!Ahab
 As Ahab now glided from the dejected Delight, the
 strange life-buoy hanging at the Pequod’s stern came into
 conspicuous relief.
